@@ -24,7 +24,7 @@ The algorithmic steps that are employed in the proposed framework allow for diff
 
 For more details, the reader can refer to [1].
 
-![alt text](/docs/similarity_score_2.png)
+![alt text](/docs/similarity_score.png)
 *\*Outline of point cloud similarity working principle. The depicted point cloud is part of the [**PointXR dataset**](https://www.epfl.ch/labs/mmspg/downloads/pointxr/) (original model source: [link](https://sketchfab.com/3d-models/hawaiian-tiki-3dscan-022f006c8ef647818d754195f02cb61f), creator: [Thomas Flynn](https://sketchfab.com/nebulousflynn), license: [CC Attribution](https://creativecommons.org/licenses/by/4.0/))*.
 
 
