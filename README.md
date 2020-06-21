@@ -6,17 +6,13 @@ In this repository, scripts for computation of structural similarity scores and 
 
 The provided material is organized in two folders:
 
-- Similarity
-
-  Scripts to compute similarity scores for a point cloud under evaluation, when compared to a reference. A similarity score is obtained per attribute. It is computed by pooling across an error map, which indicates the relative difference of associated feature maps extracted from the point clouds under comparison. The feature maps are computed using statistical dispersion estimators, applied on quantities that reflect attribute properties in local regions. Point cloud attributes for both original and distorted models (e.g., color, normals) are assumed to be present. In case of absence, the corresponding similarity scores cannot be computed.
+- **Similarity**: Scripts to compute similarity scores for a point cloud under evaluation, when compared to a reference. A similarity score is obtained per attribute. It is computed by pooling across an error map, which indicates the relative difference of associated feature maps extracted from the point clouds under comparison. The feature maps are computed using statistical dispersion estimators, applied on quantities that reflect attribute properties in local regions. Point cloud attributes for both original and distorted models (e.g., color, normals) are assumed to be present. In case of absence, the corresponding similarity scores cannot be computed.
 
   To compute point cloud similarity scores:
 
   `[sim] = pc_ssim(pcA, pcB, PARAMS)`
 
-- Voxelization
-
-  Script to voxelize a point cloud at a target bit-depth. The script currently handles voxelized inputs with (optional) color attributes, although it can be easily extended to non-voxelized models with multiple attributes. The script applies an affine transformation that scales the input geometry, maintaining the ratios of lengths of parallel segments. After the scaling process, points with the same coordinates are pruned, and their corresponding color values are blended.
+- **Voxelization**: Script to voxelize a point cloud at a target bit-depth. The script currently handles voxelized inputs with (optional) color attributes, although it can be easily extended to non-voxelized models with multiple attributes. The script applies an affine transformation that scales the input geometry, maintaining the ratios of lengths of parallel segments. After the scaling process, points with the same coordinates are pruned, and their corresponding color values are blended.
 
   To voxelize a point cloud:
 
