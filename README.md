@@ -2,7 +2,7 @@
 # PointSSIM: Towards a Point cloud Structural SIMilarity metric
 
 
-In this repository, scripts for computation of structural similarity scores and voxelization of point clouds are provided. A similarity score is based on the comparison of feature maps that reflect local properties of a point cloud attribute. Voxelization is optionally enabled prior to feature extraction, similarly to downsampling in 2D imaging, to simulate inspection from further distances. In some aspect, our implementation aims at extending the well-known SSIM to a higher-dimensional space of volumetric content.
+In this repository, scripts for computation of structural similarity scores and voxelization of point clouds are provided. A similarity score is based on the comparison of feature maps that reflect local properties of a point cloud attribute. Voxelization is optionally enabled prior to feature extraction, similarly to downsampling in 2D imaging, to simulate inspection from further distances. In some aspect, we explore the applicability of the well-known SSIM in a higher-dimensional, irregular space (volumetric content), incorporating geometrical and textural information.
 
 The provided material is organized in two folders:
 
