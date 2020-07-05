@@ -21,14 +21,14 @@ function [sim] = pc_ssim(pcA, pcB, PARAMS)
 %   Evangelos Alexiou (evangelos.alexiou@epfl.ch)
 %
 % Reference:
-%   E. Alexiou and T. Ebrahimi, "Towards a Point Cloud Structural 
-%   Similarity Metric," 2020 IEEE International Conference on Multimedia & 
+%   E. Alexiou and T. Ebrahimi, "Towards a Point Cloud Structural
+%   Similarity Metric," 2020 IEEE International Conference on Multimedia &
 %   Expo Workshops (ICMEW), London, United Kingdom, 2020, pp. 1-6.
 %
 %
 % Similarity scores between point clouds pcA and pcB. For each point cloud,
 %   a feature map is extracted using statistical dispersion estimators on
-%   per-attribute quantities in local regions (i.e., neighborhoods). An 
+%   per-attribute quantities in local regions (i.e., neighborhoods). An
 %   error map is obtained as the relative difference between associated
 %   feature maps, and a similarity score is computed after pooling over the
 %   error map. A similarity score is obtained per attribute, and depends
@@ -133,9 +133,9 @@ end
 %% Similarity scores based on normal-related features
 if PARAMS.ATTRIBUTES.NORM && ~isempty(A.norm) && ~isempty(B.norm)
     % Quantities as normal similarities between a point and each neighbor
-    nsA = real( (pi - 2*acos(abs(sum( A.norm(idA,:).*repmat(A.norm,[PARAMS.REGION_SIZE,1]) ,2))))/pi );
+    nsA = real( 1 - 2*acos(abs(sum(A.norm(idA,:).*repmat(A.norm,[PARAMS.REGION_SIZE,1]), 2)./(sqrt(sum(A.norm(idA,:).^2,2)).*sqrt(sum(repmat(A.norm,[PARAMS.REGION_SIZE,1]).^2,2)))))/pi );
     normQuantA = reshape(nsA, [size(nsA,1)/PARAMS.REGION_SIZE, PARAMS.REGION_SIZE]);
-    nsB = real( (pi - 2*acos(abs(sum( B.norm(idB,:).*repmat(B.norm,[PARAMS.REGION_SIZE,1]) ,2))))/pi );
+    nsB = real( 1 - 2*acos(abs(sum(B.norm(idB,:).*repmat(B.norm,[PARAMS.REGION_SIZE,1]), 2)./(sqrt(sum(B.norm(idB,:).^2,2)).*sqrt(sum(repmat(B.norm,[PARAMS.REGION_SIZE,1]).^2,2)))))/pi );
     normQuantB = reshape(nsB, [size(nsB,1)/PARAMS.REGION_SIZE, PARAMS.REGION_SIZE]);
     normQuantA(:,1) = [];
     normQuantB(:,1) = [];
