@@ -26,24 +26,25 @@ function [fMap] = feature_map(quant, ESTIMATOR_TYPE)
 %   Expo Workshops (ICMEW), London, United Kingdom, 2020, pp. 1-6.
 %
 %
-% Feature map of a point cloud, based on quantities that are defined per
-%   attribute and a statistical dispersion estimator, given as input.
+% Feature map of a point cloud, based on per-attribute quantities and
+%   statistical dispersion estimator(s).
 %
 %   [fMap] = feature_map(quant, ESTIMATOR_TYPE)
 %
 %   INPUTS
-%       quant: Per-attribute quantities that reflect local properties of a
-%           point cloud, defined per local region. The size is NxK, with N
-%           the number of points in the point cloud, and K the number of 
-%           points comprising the local region
-%       ESTIMATOR_TYPE: Defines the estimator(s) for computing statistical
-%           dispersion, with available options {'Variance', 'Median', 
-%           'MeanAD',  'MedianAD', 'COV', 'QCD'}.
-%           More than one options can be enabled
+%       quant: Per-attribute quantities that reflect corresponding local
+%           properties of a point cloud. The size is LxK, with L the number
+%           of points of the point cloud, and K the number of points 
+%           comprising the local neighborhood.
+%       ESTIMATOR_TYPE - Defines the estimator(s) that will be used to 
+%           compute statistical dispersion, with available options: 
+%           {'Variance', 'Median', 'MeanAD', 'MedianAD', 'COV', 'QCD'}.
+%           More than one options can be enabled.
 %
 %   OUTPUTS
-%       fMap: Point cloud feature map, given an estimator. The size is NxE,
-%           with N the number of points and E the length of ESTIMATOR_TYPE
+%       fMap: Feature map of a point cloud, per estimator. The size is LxE, 
+%           with L the number of points of the point cloud and E the length 
+%           of the ESTIMATOR_TYPE.
 
 
 fMap = zeros(size(quant,1), length(ESTIMATOR_TYPE));

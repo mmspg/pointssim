@@ -26,21 +26,23 @@ function [eMapYX] = error_map(fMapY, fMapX, idYX, CONST)
 %   Expo Workshops (ICMEW), London, United Kingdom, 2020, pp. 1-6.
 %
 %
-% Error map of point cloud Y, based on the relative difference between
+% Error map of point cloud Y, based on relative difference between
 %   associated feature maps of X and Y.
 %
 %   [eMapYX] = error_map(fMapY, fMapX, idYX, CONST)
 %
 %   INPUTS
-%       fMapX: Feature map of point cloud X. The size is Nx1
-%       fMapY: Feature map of point cloud Y. The size is Mx1
-%       idYX: Indices for the nearest points of Y in X. The size is Mx1
-%       CONST: Defines a constant that is included in the relative
-%           difference computation to avoid undefined operations
+%       fMapX: Feature map of point cloud X. The size is Nx1, with N the
+%           number of points of X.
+%       fMapY: Feature map of point cloud Y. The size is Mx1, with M the
+%           number of points of Y.
+%       idYX: Indices to associate points from Y in X. The size is Mx1.
+%       CONST - Defines a constant that is included in the relative
+%           difference computation to avoid undefined operations.
 %
 %   OUTPUTS
 %       eMapYX: Error map of point cloud Y, using X as reference. The size
-%           is Mx1, with M the number of points of Y
+%           is Mx1, with M the number of points of Y.
 
 
 eMapYX = abs(fMapX(idYX) - fMapY)./(max([abs(fMapX(idYX)), abs(fMapY)], [], 2) + CONST);

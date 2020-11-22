@@ -26,22 +26,22 @@ function [score] = pooling(qMap, POOLING_TYPE)
 %   Expo Workshops (ICMEW), London, United Kingdom, 2020, pp. 1-6.
 %
 %
-% Quality score for a point cloud, based on pooling over the corresponding
-%   quality map. A quality map can contain either distance (error) or
+% Quality score of a point cloud, based on pooling method(s) applied over 
+%   the quality map. A quality map may contain either distance (error) or 
 %   similarity values.
 %
 %   [score] = pooling(qMap, POOLING_TYPE)
 %
 %   INPUTS
-%       qMap: Quality map of a point cloud
-%       POOLING_TYPE: Defines the pooling method to compute a total quality
-%           score, with available options {'Mean', 'Min', 'Max', 'Median', 
-%           'RMS', 'MSE'}.
-%           More than one options can be enabled
+%       qMap: Quality map of a point cloud.
+%       POOLING_TYPE - Defines the pooling method(s) that will be used to 
+%           compute a total quality score, with available options: 
+%           {'Mean', 'Min', 'Max', 'MSE', 'RMS'}.
+%           More than one options can be enabled.
 %
 %   OUTPUTS
-%       score: Quality score of a point cloud. The size is 1xP, with P the 
-%           length of POOLING_TYPE
+%       score: Quality score of a point cloud, per pooling method. The size 
+%            is 1xP, with P the length of the POOLING_TYPE.
 
 
 score = zeros(1, length(POOLING_TYPE));
@@ -57,14 +57,11 @@ for i = 1:length(POOLING_TYPE)
     elseif strcmp(POOLING_TYPE{i}, 'Max')
         score(k) = nanmax(qMap);
 
-    elseif strcmp(POOLING_TYPE{i}, 'Median')
-        score(k) = nanmedian(qMap);
-
-    elseif strcmp(POOLING_TYPE{i}, 'RMS')
-        score(k) = sqrt(nanmean(qMap.^2));
-
     elseif strcmp(POOLING_TYPE{i}, 'MSE')
         score(k) = nanmean(qMap.^2);
+        
+    elseif strcmp(POOLING_TYPE{i}, 'RMS')
+        score(k) = sqrt(nanmean(qMap.^2));
 
     else
         error('WrongInput');

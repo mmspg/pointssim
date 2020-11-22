@@ -21,27 +21,27 @@ function [pcOut] = pc_vox_scale(pcIn, voxIn, voxOut)
 %   Evangelos Alexiou (evangelos.alexiou@epfl.ch)
 %
 % Reference:
-%   E. Alexiou and T. Ebrahimi, "Towards a Point Cloud Structural 
-%   Similarity Metric," 2020 IEEE International Conference on Multimedia & 
+%   E. Alexiou and T. Ebrahimi, "Towards a Point Cloud Structural
+%   Similarity Metric," 2020 IEEE International Conference on Multimedia &
 %   Expo Workshops (ICMEW), London, United Kingdom, 2020, pp. 1-6.
 %
 %
-% Voxelization of a point cloud at a different bit-depth. The script 
-%   handles only voxelized inputs with (optional) color attributes. The 
-%   output voxels will be scaled through an affine transformation that 
-%   mantains the ratios of lengths of parallel segments. After the scaling 
-%   process, points with the same coordinates are pruned, and their 
+% Voxelization of a point cloud at a different bit-depth. The script
+%   handles only voxelized inputs with (optional) color attributes. The
+%   output voxels will be scaled through an affine transformation that
+%   mantains the ratios of lengths of parallel segments. After the scaling
+%   process, points with the same coordinates are pruned, and their
 %   corresponding color values are blended.
 %
 %   [pcOut] = pc_vox_scale(pcIn, voxIn, voxOut)
 %
 %   INPUTS
-%       pcIn: Voxelized pointCloud object, or path to file
-%       voxIn: The voxel bit-depth of the input point cloud
-%       voxOut: The voxel bit-depth of the output point cloud
+%       pcIn: Voxelized pointCloud object, or path to file.
+%       voxIn: The voxel bit-depth of the input point cloud.
+%       voxOut: The voxel bit-depth of the output point cloud.
 %
 %   OUTPUTS
-%       pcOut: Voxelized point cloud at the target, output bit-depth
+%       pcOut: Voxelized point cloud at the target, output bit-depth.
 
 
 if nargin < 3
