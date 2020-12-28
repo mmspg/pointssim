@@ -21,8 +21,8 @@ function [eMapYX] = error_map(fMapY, fMapX, idYX, CONST)
 %   Evangelos Alexiou (evangelos.alexiou@epfl.ch)
 %
 % Reference:
-%   E. Alexiou and T. Ebrahimi, "Towards a Point Cloud Structural 
-%   Similarity Metric," 2020 IEEE International Conference on Multimedia & 
+%   E. Alexiou and T. Ebrahimi, "Towards a Point Cloud Structural
+%   Similarity Metric," 2020 IEEE International Conference on Multimedia &
 %   Expo Workshops (ICMEW), London, United Kingdom, 2020, pp. 1-6.
 %
 %
@@ -37,7 +37,7 @@ function [eMapYX] = error_map(fMapY, fMapX, idYX, CONST)
 %       fMapY: Feature map of point cloud Y. The size is Mx1, with M the
 %           number of points of Y.
 %       idYX: Indices to associate points from Y in X. The size is Mx1.
-%       CONST - Defines a constant that is included in the relative
+%       CONST: Defines a constant that is included in the relative
 %           difference computation to avoid undefined operations.
 %
 %   OUTPUTS

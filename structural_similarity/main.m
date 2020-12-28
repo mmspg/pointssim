@@ -27,15 +27,15 @@
 %
 % This is a simple script that serves as an example of a main. The function
 %   "pc_ssim" takes as arguments two custom structs with fields that
-%   correspond to the point cloud attributes on which the structural 
-%   similarity will be computed. Note that "geom" field is mandatory in 
-%   order to permit neighborhood formulations and associations. The PARAMS 
+%   correspond to the point cloud attributes on which the structural
+%   similarity will be computed. Note that "geom" field is mandatory in
+%   order to permit neighborhood formulations and associations. The PARAMS
 %   struct is used to configure the computation of structural similarity
-%   scores. 
-% 
-%   Below you can find an example for the computation of structural 
-%   similarity scores based on color-based features, with 'Variance' as the
-%   dispersion estimator, 'Mean' as the pooling method, 12 points as the 
+%   scores.
+%
+%   Below you can find an example for the computation of structural
+%   similarity scores using color-based features, with 'VAR' as the
+%   dispersion estimator, 'Mean' as the pooling method, 12 points as the
 %   neighborhood size, and using both point clouds as reference.
 
 
@@ -49,7 +49,7 @@ a = pcread('pointcloudA.ply');
 b = pcread('pointcloudB.ply');
 
 
-%% Structs with required fields
+%% Define structs with required fields
 pcA.geom = a.Location;
 pcA.color = a.Color;
 
@@ -57,13 +57,13 @@ pcB.geom = b.Location;
 pcB.color = b.Color;
 
 
-%% Set PARAMS
+%% Configure PARAMS
 PARAMS.ATTRIBUTES.GEOM = false;
 PARAMS.ATTRIBUTES.NORM = false;
 PARAMS.ATTRIBUTES.CURV = false;
 PARAMS.ATTRIBUTES.COLOR = true;
 
-PARAMS.ESTIMATOR_TYPE = {'Variance'};
+PARAMS.ESTIMATOR_TYPE = {'VAR'};
 PARAMS.POOLING_TYPE = {'Mean'};
 PARAMS.NEIGHBORHOOD_SIZE = 12;
 PARAMS.CONST = eps(1);
@@ -72,4 +72,3 @@ PARAMS.REF = 0;
 
 %% Compute structural similarity values based on selected PARAMS
 [pointssim] = pc_ssim(pcA, pcB, PARAMS);
-

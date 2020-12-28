@@ -21,8 +21,8 @@ function [fMap] = feature_map(quant, ESTIMATOR_TYPE)
 %   Evangelos Alexiou (evangelos.alexiou@epfl.ch)
 %
 % Reference:
-%   E. Alexiou and T. Ebrahimi, "Towards a Point Cloud Structural 
-%   Similarity Metric," 2020 IEEE International Conference on Multimedia & 
+%   E. Alexiou and T. Ebrahimi, "Towards a Point Cloud Structural
+%   Similarity Metric," 2020 IEEE International Conference on Multimedia &
 %   Expo Workshops (ICMEW), London, United Kingdom, 2020, pp. 1-6.
 %
 %
@@ -34,16 +34,16 @@ function [fMap] = feature_map(quant, ESTIMATOR_TYPE)
 %   INPUTS
 %       quant: Per-attribute quantities that reflect corresponding local
 %           properties of a point cloud. The size is LxK, with L the number
-%           of points of the point cloud, and K the number of points 
+%           of points of the point cloud, and K the number of points
 %           comprising the local neighborhood.
-%       ESTIMATOR_TYPE - Defines the estimator(s) that will be used to 
-%           compute statistical dispersion, with available options: 
-%           {'Variance', 'Median', 'MeanAD', 'MedianAD', 'COV', 'QCD'}.
+%       ESTIMATOR_TYPE: Defines the estimator(s) that will be used to
+%           compute statistical dispersion, with available options:
+%           {'STD', 'VAR', 'MeanAD', 'MedianAD', 'COV', 'QCD'}.
 %           More than one options can be enabled.
 %
 %   OUTPUTS
-%       fMap: Feature map of a point cloud, per estimator. The size is LxE, 
-%           with L the number of points of the point cloud and E the length 
+%       fMap: Feature map of a point cloud, per estimator. The size is LxE,
+%           with L the number of points of the point cloud and E the length
 %           of the ESTIMATOR_TYPE.
 
 
@@ -51,11 +51,11 @@ fMap = zeros(size(quant,1), length(ESTIMATOR_TYPE));
 
 k = 1;
 for i = 1:length(ESTIMATOR_TYPE)
-    if strcmp(ESTIMATOR_TYPE{i}, 'Variance')
-        fMap(:,k) = var(quant,[],2);
+    if strcmp(ESTIMATOR_TYPE{i}, 'STD')
+        fMap(:,k) = std(quant,[],2);
 
-    elseif strcmp(ESTIMATOR_TYPE{i}, 'Median')
-        fMap(:,k) = median(quant,2);
+    elseif strcmp(ESTIMATOR_TYPE{i}, 'VAR')
+        fMap(:,k) = var(quant,[],2);
 
     elseif strcmp(ESTIMATOR_TYPE{i}, 'MeanAD')
         fMap(:,k) = mean(abs(quant - mean(quant,2)),2);
@@ -70,7 +70,7 @@ for i = 1:length(ESTIMATOR_TYPE)
         qq = quantile(quant, [.25 .75], 2);
         fMap(:,k) = (qq(:,2) - qq(:,1)) ./ (qq(:,2) + qq(:,1));
     else
-        error('WrongInput');
+        error('Wrong input.');
     end
     k = k+1;
 end

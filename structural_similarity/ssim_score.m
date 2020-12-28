@@ -55,11 +55,11 @@ function [ssimBA, ssimAB, ssimSym] = ssim_score(quantA, quantB, idBA, idAB, PARA
 %               More than one options can be enabled.
 %           ESTIMATOR_TYPE - Defines the estimator(s) that will be used to
 %               compute statistical dispersion, with available options:
-%               {'Variance', 'Median', 'MeanAD', 'MedianAD', 'COV', 'QCD'}.
+%               {'STD', 'VAR', 'MeanAD', 'MedianAD', 'COV', 'QCD'}.
 %               More than one options can be enabled.
 %           POOLING_TYPE - Defines the pooling method(s) that will be used
 %               to compute a total quality score, with available options:
-%               {'Mean', 'Min', 'Max', 'MSE', 'RMS'}.
+%               {'Mean', 'MSE', 'RMS'}.
 %               More than one options can be enabled.
 %           NEIGHBORHOOD_SIZE - Defines the number of nearest neighbors
 %               over which the estimator(s) will be applied.
@@ -85,9 +85,9 @@ function [ssimBA, ssimAB, ssimSym] = ssim_score(quantA, quantB, idBA, idAB, PARA
 ssimBA = [];
 ssimAB = [];
 ssimSym = [];
-%%% distBA = [];
-%%% distAB = [];
-%%% distSym = [];
+%%% errorBA = [];
+%%% errorAB = [];
+%%% errorSym = [];
 
 
 %% Feature map extraction
@@ -98,12 +98,12 @@ ssimSym = [];
 %% Structucal similarity score of B (set A as reference)
 if PARAMS.REF == 0 || PARAMS.REF == 1
     ssimBA = zeros(length(PARAMS.ESTIMATOR_TYPE), length(PARAMS.POOLING_TYPE));
-%%%     distBA = zeros(length(PARAMS.ESTIMATOR_TYPE), length(PARAMS.POOLING_TYPE));
+%%%     errorBA = zeros(length(PARAMS.ESTIMATOR_TYPE), length(PARAMS.POOLING_TYPE));
     for i = 1:length(PARAMS.ESTIMATOR_TYPE)
         [errorMapBA] = error_map(featMapB(:,i), featMapA(:,i), idBA, PARAMS.CONST);    % Computation of error map
-        simMapBA = 1 - errorMapBA;                                              % Similarity map as 1 - error_map
-        [ssimBA(i,:)] = pooling(simMapBA, PARAMS.POOLING_TYPE);                  % Pooling across map to obtain a quality score
-%%%         [distBA(i,:)] = pooling(errorMapBA, PARAMS.POOLING_TYPE);
+        ssimMapBA = 1 - errorMapBA;                                               % Similarity map as 1 - error_map
+        [ssimBA(i,:)] = pooling(ssimMapBA, PARAMS.POOLING_TYPE);                  % Pooling across map to obtain a quality score
+%%%         [errorBA(i,:)] = pooling(errorMapBA, PARAMS.POOLING_TYPE);
     end
 end
 
@@ -111,12 +111,12 @@ end
 %% Structucal similarity score of A (set B as reference)
 if PARAMS.REF == 0 || PARAMS.REF == 2
     ssimAB = zeros(length(PARAMS.ESTIMATOR_TYPE), length(PARAMS.POOLING_TYPE));
-%%%     distAB = zeros(length(PARAMS.ESTIMATOR_TYPE), length(PARAMS.POOLING_TYPE));
+%%%     errorAB = zeros(length(PARAMS.ESTIMATOR_TYPE), length(PARAMS.POOLING_TYPE));
     for i = 1:length(PARAMS.ESTIMATOR_TYPE)
         [errorMapAB] = error_map(featMapA(:,i), featMapB(:,i), idAB, PARAMS.CONST);    % Computation of error map
-        simMapAB = 1 - errorMapAB;                                              % Similarity map as 1 - error_map
-        [ssimAB(i,:)] = pooling(simMapAB, PARAMS.POOLING_TYPE);                  % Pooling across map to obtain a quality score
-%%%         [distAB(i,:)] = error_pooling(errorMapAB, PARAMS.POOLING_TYPE);
+        ssimMapAB = 1 - errorMapAB;                                               % Similarity map as 1 - error_map
+        [ssimAB(i,:)] = pooling(ssimMapAB, PARAMS.POOLING_TYPE);                  % Pooling across map to obtain a quality score
+%%%         [errorAB(i,:)] = error_pooling(errorMapAB, PARAMS.POOLING_TYPE);
     end
 end
 
@@ -124,5 +124,5 @@ end
 %% Symmetric structucal similarity score
 if PARAMS.REF == 0
     ssimSym = min(ssimBA, ssimAB);     % Maximum error, or minimum similarity
-%%%     distSym = max(distBA, distAB);
+%%%     errorSym = max(errorBA, errorAB);
 end

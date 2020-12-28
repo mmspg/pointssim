@@ -26,65 +26,65 @@ function [pointssim] = pc_ssim(pcA, pcB, PARAMS)
 %   Expo Workshops (ICMEW), London, United Kingdom, 2020, pp. 1-6.
 %
 %
-% Structural similarity scores between point clouds A and B, which are 
-%   represented by the corresponding custom structs pcA and pcB. Local 
-%   neighborhoods are formulated in A and B, and then they are associated. 
-%   In each local neighborhood, per-attribute quantities are defined. For 
-%   each point cloud, a feature map is extracted using a statistical 
-%   dispersion estimator on these per-attribute quantities. An error map is  
-%   obtained as the relative difference between associated feature maps,  
-%   and a structural similarity score is computed through pooling. A 
-%   structural similarity score is obtained per attribute, and depends on  
-%   the dispersion estimator, the pooling method, the size of the local 
-%   neighborhood, and the selection of the reference point cloud. These 
+% Structural similarity scores between point clouds A and B, which are
+%   represented by the corresponding custom structs pcA and pcB. Local
+%   neighborhoods are formulated in A and B, and then they are associated.
+%   In each local neighborhood, per-attribute quantities are defined. For
+%   each point cloud, a feature map is extracted using a statistical
+%   dispersion estimator on these per-attribute quantities. An error map is
+%   obtained as the relative difference between associated feature maps,
+%   and a structural similarity score is computed via pooling. A structural
+%   similarity score is obtained per attribute, and depends on the
+%   dispersion estimator, the pooling method, the size of the local
+%   neighborhood, and the selection of the reference point cloud. These
 %   parameters can be configured in the struct PARAMS.
 %
 %   [pointssim] = pc_ssim(pcA, pcB, PARAMS)
 %
 %   INPUTS
 %       pcA: Custom struct for point cloud A, with fields:
-%           geom - Geometry (mandatory field). 
+%           geom - Geometry (mandatory field).
 %               The size is Nx3, with N the number of points of A.
-%           norm - Normal vectors (optional field). 
+%           norm - Normal vectors (optional field).
 %               The size is Nx3, with N the number of points of A.
-%           curv - Curvature values (optional field). 
+%           curv - Curvature values (optional field).
 %               The size is Nx1, with N the number of points of A.
-%           color - RGB color values (optional field). 
+%           color - RGB color values (optional field).
 %               The size is Nx3, with N the number of points of A.
 %       pcB: Custom struct for point cloud B, with fields:
-%           geom - Geometry (mandatory field). 
+%           geom - Geometry (mandatory field).
 %               The size is Mx3, with M the number of points of B.
-%           norm - Normal vectors (optional field). 
+%           norm - Normal vectors (optional field).
 %               The size is Mx3, with M the number of points of B.
 %           curv - Curvature values (optional field).
 %               The size is Mx1, with M the number of points of B.
-%           color - RGB color values (optional field). 
+%           color - RGB color values (optional field).
 %               The size is Mx3, with M the number of points of B.
-%       PARAMS: Struct of parameters for the computation of structural 
+%       PARAMS: Struct of parameters for the computation of structural
 %           similarity scores, with the following fields:
-%           ATTRIBUTES - Defines the attribute-related feature(s) that will  
-%               be used to compute structural similarity scores, with the 
+%           ATTRIBUTES - Defines the attribute-related feature(s) that will
+%               be used to compute structural similarity scores, with the
 %               following fields:
 %                  GEOM - Boolean to enable geometry-related features.
 %                  NORM - Boolean to enable normal-related features.
 %                  CURV - Boolean to enable curvature-related features.
 %                  COLOR - Boolean to enable color-related features.
 %               More than one options can be enabled.
-%           ESTIMATOR_TYPE - Defines the estimator(s) that will be used to 
-%               compute statistical dispersion, with available options: 
-%               {'Variance', 'Median', 'MeanAD', 'MedianAD', 'COV', 'QCD'}.
+%           ESTIMATOR_TYPE - Defines the estimator(s) that will be used to
+%               compute statistical dispersion, with available options:
+%               {'STD', 'VAR', 'MeanAD', 'MedianAD', 'COV', 'QCD'}.
 %               More than one options can be enabled.
-%           POOLING_TYPE - Defines the pooling method(s) that will be used  
-%               to compute a total quality score, with available options: 
-%               {'Mean', 'Min', 'Max', 'MSE', 'RMS'}.
+%           POOLING_TYPE - Defines the pooling method(s) that will be used
+%               to compute a total quality score, with available options:
+%               {'Mean', 'MSE', 'RMS'}.
 %               More than one options can be enabled.
-%           NEIGHBORHOOD_SIZE - Defines the number of nearest neighbors 
+%           NEIGHBORHOOD_SIZE - Defines the number of nearest neighbors
 %               over which the estimator(s) will be applied.
 %           CONST - Defines a constant that is included in the relative
 %               difference computation to avoid undefined operations.
-%           REF - Defines if symmetric and/or asymmetric structural 
-%               similarity scores will be computed, with available options: 
-%               {0: Both point clouds as reference, 1: Point cloud A as 
+%           REF - Defines if symmetric and/or asymmetric structural
+%               similarity scores will be computed, with available options:
+%               {0: Both point clouds as reference, 1: Point cloud A as
 %               reference, 2: Point cloud B as reference}.
 %
 %   OUTPUTS
@@ -94,21 +94,37 @@ function [pointssim] = pc_ssim(pcA, pcB, PARAMS)
 
 if nargin < 2
     error('Too few input arguments.');
-elseif nargin == 2
-    if isempty(pcA.geom) || isempty(pcB.geom)
+else
+    if ~isfield(pcA,'geom') || ~isfield(pcB,'geom')
         error('No coordinates found in input point cloud(s).');
-    else
-        % Deafult parameters
-        PARAMS.ATTRIBUTES.GEOM = true;
-        PARAMS.ATTRIBUTES.NORM = true;
-        PARAMS.ATTRIBUTES.CURV = true;
-        PARAMS.ATTRIBUTES.COLOR = true;
+    end
+    
+    if nargin == 2
+        if isfield(pcA,'color') && isfield(pcB,'color')
+            % Default parameters
+            PARAMS.ATTRIBUTES.GEOM = false;
+            PARAMS.ATTRIBUTES.NORM = false;
+            PARAMS.ATTRIBUTES.CURV = false;
+            PARAMS.ATTRIBUTES.COLOR = true;
 
-        PARAMS.ESTIMATOR_TYPE = {'Variance', 'Median', 'MeanAD', 'MedianAD', 'COV', 'QCD'};
-        PARAMS.POOLING_TYPE = {'Mean', 'Max', 'MSE', 'RMS'};
-        PARAMS.NEIGHBORHOOD_SIZE = 12;
-        PARAMS.CONST = eps(1);
-        PARAMS.REF = 0;
+            PARAMS.ESTIMATOR_TYPE = {'VAR'};
+            PARAMS.POOLING_TYPE = {'Mean'};
+            PARAMS.NEIGHBORHOOD_SIZE = 12;
+            PARAMS.CONST = eps(1);
+            PARAMS.REF = 0;
+        else
+           error('Configure PARAMS.');
+        end
+    else
+        if PARAMS.ATTRIBUTES.NORM && (~isfield(pcA,'norm') || ~isfield(pcB,'norm'))
+            error('No normals found in input point cloud(s).');
+        end
+        if PARAMS.ATTRIBUTES.CURV && (~isfield(pcA,'curv') || ~isfield(pcB,'curv'))
+            error('No curvatures found in input point cloud(s).');
+        end
+        if PARAMS.ATTRIBUTES.COLOR && (~isfield(pcA,'color') || ~isfield(pcB,'color'))
+            error('No color found in input point cloud(s).');
+        end
     end
 end
 
@@ -145,7 +161,7 @@ end
 
 
 %% Structural similarity scores based on normal-related features
-if PARAMS.ATTRIBUTES.NORM && ~isempty(A.norm) && ~isempty(B.norm)
+if PARAMS.ATTRIBUTES.NORM 
     % Quantities as normal similarities between a point and each neighbor
     nsA = real( 1 - 2*acos(abs(sum(A.norm(idA,:).*repmat(A.norm,[PARAMS.NEIGHBORHOOD_SIZE,1]), 2)./(sqrt(sum(A.norm(idA,:).^2,2)).*sqrt(sum(repmat(A.norm,[PARAMS.NEIGHBORHOOD_SIZE,1]).^2,2)))))/pi );
     normQuantA = reshape(nsA, [size(nsA,1)/PARAMS.NEIGHBORHOOD_SIZE, PARAMS.NEIGHBORHOOD_SIZE]);
@@ -162,7 +178,7 @@ end
 
 
 %% Structural similarity scores based on curvature-related features
-if PARAMS.ATTRIBUTES.CURV && ~isempty(A.curv) && ~isempty(B.curv)
+if PARAMS.ATTRIBUTES.CURV 
     % Quantities as curvature of points that belong to the neighborhood
     curvQuantA = real(A.curv(idA));
     curvQuantB = real(B.curv(idB));
@@ -175,7 +191,7 @@ end
 
 
 %% Structural similarity scores based on color-related features
-if PARAMS.ATTRIBUTES.COLOR && ~isempty(A.color) && ~isempty(B.color)
+if PARAMS.ATTRIBUTES.COLOR
     % Quantities as luminance of points that belong to the neighborhood
     [yA, ~, ~] = rgb_to_yuv(A.color(:,1), A.color(:,2), A.color(:,3));
     [yB, ~, ~] = rgb_to_yuv(B.color(:,1), B.color(:,2), B.color(:,3));
