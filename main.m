@@ -42,7 +42,7 @@
 %   loaded and assigned to corresponding fields of custom structs that are
 %   used for point clouds (see sA and sB below), but after considering the
 %   geometry sorting, point fusion and voxelization steps that take place 
-%   below (i.e., attributes should be estimated on the resulting geomerty). 
+%   below (i.e., attributes should be estimated on the resulting geometry). 
 %   In all cases, the same software implementation and the same
 %   configuration (e.g., neighborhood size) should be used to estimate
 %   normals/curvatures, for both the original and the distorted contents.
