@@ -69,6 +69,7 @@ if strcmp(FITTING.SEARCH_METHOD, 'rs')
 elseif strcmp(FITTING.SEARCH_METHOD, 'knn')
     knn = 12;
 end
+FITTING.SEARCH_SIZE = [];
 
 QUANT.VOXELIZATION = false;
 QUANT.TARGET_BIT_DEPTH = 9;
