@@ -26,22 +26,24 @@ function [pcOut] = pc_vox_scale(pcIn, voxIn, voxOut)
 %   Expo Workshops (ICMEW), London, United Kingdom, 2020, pp. 1-6.
 %
 %
-% Voxelization of a point cloud at a different bit-depth. The script
-%   handles only voxelized inputs with (optional) color attributes. The
-%   output voxels will be scaled through an affine transformation that
-%   mantains the ratios of lengths of parallel segments. After the scaling
-%   process, points with the same coordinates are pruned, and their
-%   corresponding color values are blended.
-%
+% Voxelization of a point cloud at a target bit-depth. The script takes as
+%   input a voxelized point cloud with optional color values. The output
+%   voxels are scaled through an affine transformation that mantains the 
+%   ratios of lengths of parallel segments. After scaling, points with same
+%   coordinates are discarded and corresponding color values are averaged.
+%   
 %   [pcOut] = pc_vox_scale(pcIn, voxIn, voxOut)
 %
 %   INPUTS
-%       pcIn: Voxelized pointCloud object, or path to file.
+%       pcIn: A pointCloud object, or path to file with voxelized geometry.
+%           The color values are optional. The size of pcIn.Location and
+%           the optional pcIn.Color is Nx3, with N the number of points.
 %       voxIn: The voxel bit-depth of the input point cloud.
-%       voxOut: The voxel bit-depth of the output point cloud.
+%       voxOut: The target voxel bit-depth of the output point cloud.
 %
 %   OUTPUTS
-%       pcOut: Voxelized point cloud at the target, output bit-depth.
+%       pcOut: A pointCloud object. The size of pcOut.Location and the 
+%           optional pcOut.Color is Mx3, with M <= N.
 
 
 if nargin < 3

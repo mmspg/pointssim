@@ -34,14 +34,15 @@ function [y, u, v] = rgb_to_yuv(r, g, b)
 %   [y, u, v] = rgb_to_yuv(r, g, b)
 %
 %   INPUTS
-%       r: Red color channel
-%       g: Green color channel
-%       b: Blue color channel
+%       r: Red color channel. The size is Lx1, with L the number of color 
+%           values.
+%       g: Green color channel. The size is Lx1.
+%       b: Blue color channel. The size is Lx1.
 %
 %   OUTPUTS
-%       y: Luminance
-%       u: Blue-projection chrominance component
-%       v: Red-projection chrominance component
+%       y: Luminance component. The size is Lx1.
+%       u: Blue-projection chrominance component. The size is Lx1.
+%       v: Red-projection chrominance component. The size is Lx1.
 
 
 r = double(r);

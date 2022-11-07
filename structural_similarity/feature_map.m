@@ -26,25 +26,25 @@ function [fMap] = feature_map(quant, ESTIMATOR_TYPE)
 %   Expo Workshops (ICMEW), London, United Kingdom, 2020, pp. 1-6.
 %
 %
-% Feature map of a point cloud, based on per-attribute quantities and
+% Feature map(s) of a point cloud, based on attribute-based quantities and
 %   statistical dispersion estimator(s).
 %
 %   [fMap] = feature_map(quant, ESTIMATOR_TYPE)
 %
 %   INPUTS
-%       quant: Per-attribute quantities that reflect corresponding local
-%           properties of a point cloud. The size is LxK, with L the number
-%           of points of the point cloud, and K the number of points
-%           comprising the local neighborhood.
+%       quant: Attribute-based quantities of a point cloud. The size is 
+%           LxK, with L the number of points of the point cloud, and K the 
+%           number of points comprising the local neighborhood.
 %       ESTIMATOR_TYPE: Defines the estimator(s) that will be used to
 %           compute statistical dispersion, with available options:
 %           {'STD', 'VAR', 'MeanAD', 'MedianAD', 'COV', 'QCD'}.
-%           More than one options can be enabled.
+%           **{'Mean'} has been additionally included as an extra  
+%           statistic to estimate the center of the distribution.**
+%           More than one option can be enabled.
 %
 %   OUTPUTS
 %       fMap: Feature map of a point cloud, per estimator. The size is LxE,
-%           with L the number of points of the point cloud and E the length
-%           of the ESTIMATOR_TYPE.
+%           with E the length of the ESTIMATOR_TYPE.
 
 
 fMap = zeros(size(quant,1), length(ESTIMATOR_TYPE));
@@ -69,6 +69,10 @@ for i = 1:length(ESTIMATOR_TYPE)
     elseif strcmp(ESTIMATOR_TYPE{i}, 'QCD')
         qq = quantile(quant, [.25 .75], 2);
         fMap(:,k) = (qq(:,2) - qq(:,1)) ./ (qq(:,2) + qq(:,1));
+    
+    elseif strcmp(ESTIMATOR_TYPE{i}, 'Mean')
+        fMap(:,k) = mean(quant,2);
+
     else
         error('Wrong input.');
     end

@@ -26,18 +26,20 @@ function [score] = pooling(qMap, POOLING_TYPE)
 %   Expo Workshops (ICMEW), London, United Kingdom, 2020, pp. 1-6.
 %
 %
-% Quality score of a point cloud, based on pooling method(s) applied over
-%   a quality map. A quality map may contain either error, or similarity
-%   values.
+% Application of pooling method(s) over a quality map of a point cloud, to
+%   compute quality score(s). A quality map contains similarity (or error) 
+%   values, each corresponding to one point of a point cloud.
 %
 %   [score] = pooling(qMap, POOLING_TYPE)
 %
 %   INPUTS
-%       qMap: Quality map of a point cloud.
+%       qMap: Quality map of a point cloud. The size is Lx1, with L the
+%           number of similarity (or error) values (equal to the number of 
+%           points in the point cloud).
 %       POOLING_TYPE: Defines the pooling method(s) that will be used to
 %           compute a total quality score, with available options:
-%           {'Mean', 'MSE', 'RMS'}.
-%           More than one options can be enabled.
+%           {'Mean', 'MSE', 'RMSE'}.
+%           More than one option can be enabled.
 %
 %   OUTPUTS
 %       score: Quality score of a point cloud, per pooling method. The size
@@ -54,7 +56,7 @@ for i = 1:length(POOLING_TYPE)
     elseif strcmp(POOLING_TYPE{i}, 'MSE')
         score(k) = nanmean(qMap.^2);
 
-    elseif strcmp(POOLING_TYPE{i}, 'RMS')
+    elseif strcmp(POOLING_TYPE{i}, 'RMSE')
         score(k) = sqrt(nanmean(qMap.^2));
 
     else

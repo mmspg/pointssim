@@ -2,23 +2,42 @@
 # PointSSIM: Point cloud structural similarity metric
 
 
-In this repository, scripts for the computation of structural similarity scores and the voxelization of point clouds are provided. A structural similarity score is based on the comparison of feature maps that reflect local properties of a point cloud attribute. Voxelization is optionally enabled prior to feature extraction, similarly to downsampling in 2D imaging, to simulate inspection from further distances. In some aspect, we explore the applicability of the well-known SSIM in a higher-dimensional, irregular space (volumetric content), incorporating geometrical and textural information.
+In this repository, scripts for the computation of point cloud structural similarity scores and pre-processing stages defined in [1] (i.e., point fusion, voxelization, attribute estimation), are released. Regarding pre-processing, with point fusion, duplicated point coordinates are discarded and corresponding color values are averaged. Voxelization is optionally enabled to simulate inspection from further distances, similarly to downsampling in 2D imaging. Attribute estimation is necessary, when normal vectors and/or curvatures are not present. Regarding the execution of the metric, structural similarity scores are computed based on the comparison of feature maps that reflect local properties of point cloud attributes; in our case, geometry, normals, curvatures or colors. In some aspect, we explore the applicability of the well-known SSIM in a higher-dimensional, irregular space (volumetric content), incorporating geometrical and textural information.
 
-The provided material is organized in two folders:
+The provided scipts are organized in four folders, and a main that serves as an example of their usage:
 
-- **structucal_similarity**: Scripts to compute structural similarity scores for a point cloud under evaluation, when compared to a reference. A structural similarity score is obtained per attribute. It is computed by pooling across the complement of 1 to an error map, which indicates the relative difference of associated feature maps extracted from the point clouds under comparison. The feature maps are computed using statistical dispersion estimators, applied on quantities that reflect attribute properties in local neighborhoods. Point cloud attributes for both the original and the distorted models (e.g., color, normals) are assumed to be present. In case of absence, the corresponding structural similarity scores cannot be computed.
+- **point_fusion**: Script to fuse points with duplicate coordinates in a point cloud. Corresponding color values are averaged, if present, and unique coordinates are kept. 
 
-  To compute point cloud structural similarity scores:
+  To apply point fusion:
 
-  `[pointssim] = pc_ssim(pcA, pcB, PARAMS)`
+  `[pcOut] = pc_fuse_points(pcIn)`
 
-- **voxelization**: Script to voxelize a point cloud at a target bit-depth. The script currently handles voxelized inputs with (optional) color attributes, although it can be easily extended to non-voxelized models with multiple attributes. The script applies an affine transformation that scales the input geometry, maintaining the ratios of lengths of parallel segments. After the scaling process, points with the same coordinates are pruned, and their corresponding color values are blended.
+  with `pcIn` an input pointCloud object or path to file, and `pcOut` an output pointCloud object.
 
-  To voxelize a point cloud:
+- **voxelization**: Script to voxelize a point cloud at a target bit-depth. The script takes as input a voxelized point cloud with optional color values. The output voxels are scaled through an affine transformation that mantains the ratios of lengths of parallel segments. After scaling, points with same coordinates are discarded and corresponding color values are averaged.
+
+  To voxelize a point cloud at a target bit-depth:
 
   `[pcOut] = pc_vox_scale(pcIn, voxIn, voxOut)`
 
-The algorithmic steps that are employed in the proposed framework allow for different configurations, and facilitate the integration of new quantities, attributes and estimators.
+  with `pcIn` an input pointCloud object or path to file, `voxIn` the bit-depth of the input, `voxOut` the target bit-depth of the output, and `pcOut` an output pointCloud object.
+
+- **attribute_estimation**: Scripts to estimate normals and curvatures of a point cloud using quadric fitting. The neighbors required around every point for the fitting process can be identified using either k-nn or range-search algorithms. Moreover, the size of the neighborhood can be manually determined.
+
+  To estimate normal and curvature attributes:
+
+  `[normals, curvatures] = pc_estimate_norm_curv_qfit(pcIn, SEARCH_METHOD, SEARCH_SIZE)`
+
+  with `pcIn` a pointCloud object or path to file, `SEARCH_METHOD` the selected method to identify neighborhoods, with available options: `{'rs', 'knn'}`, and `SEARCH_SIZE` the size of neighborhoods. When `SEARCH_METHOD` is set to `'rs'` the range-search algorithm is used and the `SEARCH_SIZE` corresponds to the radius. When `SEARCH_METHOD`is set to `'knn'`, the k-nn algorithm is used and the `SEARCH_SIZE` corresponds to the k neighbors. The `normals` and `curvatures` indicate matrices with corresponding estimated point cloud attributes.
+
+- **structucal_similarity**: Scripts to compute structural similarity scores for a point cloud under evaluation, when compared to a reference. A structural similarity score is obtained per attribute, namely, geometry, normal, curvature, and color. It is computed by pooling across the complement of 1 to an error map, which indicates the relative difference of associated feature maps extracted from the point clouds under comparison, as depicted in the figure below. The feature maps are computed using statistical dispersion estimators, applied on quantities that reflect attribute properties in local neighborhoods.
+
+  To compute point cloud structural similarity scores:
+
+  `[pssim] = pointssim(sA, sB, PARAMS)`
+
+  with `sA` and `sB` custom structs for point clouds `A` and `B`, respectively, containing fields that correspond to the attributes under consideration.
+
 
 For more details, the reader can refer to [1].
 

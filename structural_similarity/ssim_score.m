@@ -26,41 +26,41 @@ function [ssimBA, ssimAB, ssimSym] = ssim_score(quantA, quantB, idBA, idAB, PARA
 %   Expo Workshops (ICMEW), London, United Kingdom, 2020, pp. 1-6.
 %
 %
-% Structural similarity scores computation between point clouds A and B
-%   based on per-attribute quantities, neighbohood associations, and
-%   parameters configuration in the struct PARAMS.
+% Structural similarity scores between point clouds A and B, based on
+%   corresponding attribute-based quantities, points associations, and
+%   parameters configuration.
 %
 %   [ssimBA, ssimAB, ssimSym] = ssim_score(quantA, quantB, idBA, idAB, PARAMS)
 %
 %   INPUTS
-%       quantA: Per-attribute quantities that reflect corresponding local
-%           properties of point cloud A. The size is NxK, with N the number
-%           of points of A, and K the number of points comprising the local
-%           neighborhood.
-%       quantB: Per-attribute quantities that reflect corresponding local
-%           properties of point cloud B. The size is MxK, with M the number
-%           of points of B, and K the number of points comprising the local
-%           neighborhood.
+%       quantA: Attribute-based quantities of point cloud A. The size is 
+%           NxK, with N the number of points of A, and K the number of 
+%           points comprising the local neighborhood.
+%       quantB: Attribute-based quantities of point cloud B. The size is 
+%           MxK, with M the number of points of B, and K the number of 
+%           points comprising the local neighborhood.
 %       idBA: Indices to associate points from B in A. The size is Mx1.
 %       idAB: Indices to associate points from A in B. The size is Nx1.
-%       PARAMS: Struct of parameters for the computation of structural
-%           similarity scores, with the following fields:
-%           ATTRIBUTES - Defines the attribute-related feature(s) that will
+%       PARAMS: Custom struct of parameters for the computation of 
+%           structural similarity scores, with the following fields:
+%           ATTRIBUTES - Defines the attribute-based feature(s) that will 
 %               be used to compute structural similarity scores, with the
 %               following fields:
-%                  GEOM - Boolean to enable geometry-related features.
-%                  NORM - Boolean to enable normal-related features.
-%                  CURV - Boolean to enable curvature-related features.
-%                  COLOR - Boolean to enable color-related features.
-%               More than one options can be enabled.
+%                  GEOM - Boolean to enable geometry-based features.
+%                  NORM - Boolean to enable normal-based features.
+%                  CURV - Boolean to enable curvature-based features.
+%                  COLOR - Boolean to enable color-based features.
+%               More than one option can be enabled.
 %           ESTIMATOR_TYPE - Defines the estimator(s) that will be used to
 %               compute statistical dispersion, with available options:
 %               {'STD', 'VAR', 'MeanAD', 'MedianAD', 'COV', 'QCD'}.
-%               More than one options can be enabled.
+%               **{'Mean'} has been additionally included as an extra  
+%               statistic to estimate the center of the distribution.**
+%               More than one option can be enabled.
 %           POOLING_TYPE - Defines the pooling method(s) that will be used
 %               to compute a total quality score, with available options:
-%               {'Mean', 'MSE', 'RMS'}.
-%               More than one options can be enabled.
+%               {'Mean', 'MSE', 'RMSE'}.
+%               More than one option can be enabled.
 %           NEIGHBORHOOD_SIZE - Defines the number of nearest neighbors
 %               over which the estimator(s) will be applied.
 %           CONST - Defines a constant that is included in the relative
@@ -75,11 +75,9 @@ function [ssimBA, ssimAB, ssimSym] = ssim_score(quantA, quantB, idBA, idAB, PARA
 %           reference. The size is ExP, with E the length of ESTIMATOR_TYPE
 %           and P the length of POOLING_TYPE.
 %       ssimAB: Structural similarity scores of point cloud A, using B as
-%           reference. The size is ExP, with E the length of ESTIMATOR_TYPE
-%           and P the length of POOLING_TYPE.
+%           reference. The size is ExP.
 %       ssimSym: Symmetric structural similarity scores, using both A and B
-%           as reference. The size is ExP, with E the length of
-%           ESTIMATOR_TYPE and P the length of POOLING_TYPE.
+%           as reference. The size is ExP.
 
 
 ssimBA = [];
@@ -100,9 +98,9 @@ if PARAMS.REF == 0 || PARAMS.REF == 1
     ssimBA = zeros(length(PARAMS.ESTIMATOR_TYPE), length(PARAMS.POOLING_TYPE));
 %%%     errorBA = zeros(length(PARAMS.ESTIMATOR_TYPE), length(PARAMS.POOLING_TYPE));
     for i = 1:length(PARAMS.ESTIMATOR_TYPE)
-        [errorMapBA] = error_map(featMapB(:,i), featMapA(:,i), idBA, PARAMS.CONST);    % Computation of error map
-        ssimMapBA = 1 - errorMapBA;                                               % Similarity map as 1 - error_map
-        [ssimBA(i,:)] = pooling(ssimMapBA, PARAMS.POOLING_TYPE);                  % Pooling across map to obtain a quality score
+        [errorMapBA] = error_map(featMapB(:,i), featMapA(:,i), idBA, PARAMS.CONST);     % Computation of error map
+        ssimMapBA = 1 - errorMapBA;                                                     % Similarity map as 1 - error_map
+        [ssimBA(i,:)] = pooling(ssimMapBA, PARAMS.POOLING_TYPE);                        % Pooling across similarity map to obtain a quality score
 %%%         [errorBA(i,:)] = pooling(errorMapBA, PARAMS.POOLING_TYPE);
     end
 end
@@ -113,9 +111,9 @@ if PARAMS.REF == 0 || PARAMS.REF == 2
     ssimAB = zeros(length(PARAMS.ESTIMATOR_TYPE), length(PARAMS.POOLING_TYPE));
 %%%     errorAB = zeros(length(PARAMS.ESTIMATOR_TYPE), length(PARAMS.POOLING_TYPE));
     for i = 1:length(PARAMS.ESTIMATOR_TYPE)
-        [errorMapAB] = error_map(featMapA(:,i), featMapB(:,i), idAB, PARAMS.CONST);    % Computation of error map
-        ssimMapAB = 1 - errorMapAB;                                               % Similarity map as 1 - error_map
-        [ssimAB(i,:)] = pooling(ssimMapAB, PARAMS.POOLING_TYPE);                  % Pooling across map to obtain a quality score
+        [errorMapAB] = error_map(featMapA(:,i), featMapB(:,i), idAB, PARAMS.CONST);     % Computation of error map
+        ssimMapAB = 1 - errorMapAB;                                                     % Similarity map as 1 - error_map
+        [ssimAB(i,:)] = pooling(ssimMapAB, PARAMS.POOLING_TYPE);                        % Pooling across similarity map to obtain a quality score
 %%%         [errorAB(i,:)] = error_pooling(errorMapAB, PARAMS.POOLING_TYPE);
     end
 end
