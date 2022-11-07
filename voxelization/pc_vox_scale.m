@@ -56,6 +56,9 @@ else
     end
 end
 
+
+fprintf('Voxelization\n');
+tic;
 % Get geometry and color
 geomIn = double(pc.Location);
 clrsIn = double(pc.Color);
@@ -104,3 +107,4 @@ clrOut = uint8(round(clrsBlend));
 
 % Point cloud voxelized at the voxTarget
 pcOut = pointCloud(geomOut, 'Color', clrOut);
+toc;

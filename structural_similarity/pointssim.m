@@ -133,7 +133,6 @@ else
 end
 
 
-
 %% Conversion to double
 A = structfun(@double, sA, 'UniformOutput', false);
 B = structfun(@double, sB, 'UniformOutput', false);
@@ -141,24 +140,17 @@ B = structfun(@double, sB, 'UniformOutput', false);
 
 %% Sort geometry and corresponding attributes
 [A.geom, idgA] = sortrows(A.geom);
-if isfield(A,'norm')
-    A.norm = A.norm(idgA, :);
-end
-if isfield(A,'curv')
-    A.curv = A.curv(idgA, :);
-end
-if isfield(A,'color')
-    A.color = A.color(idgA, :);
-end
-
 [B.geom, idgB] = sortrows(B.geom);
-if isfield(B,'norm')
+if PARAMS.ATTRIBUTES.NORM
+    A.norm = A.norm(idgA, :);
     B.norm = B.norm(idgB, :);
 end
-if isfield(B,'curv')
+if PARAMS.ATTRIBUTES.CURV
+    A.curv = A.curv(idgA, :);
     B.curv = B.curv(idgB, :);
 end
-if isfield(B,'color')
+if PARAMS.ATTRIBUTES.COLOR
+    A.color = A.color(idgA, :);
     B.color = B.color(idgB, :);
 end
 

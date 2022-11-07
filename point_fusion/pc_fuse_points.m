@@ -52,6 +52,9 @@ else
     end
 end
 
+
+fprintf('Point fusion\n');
+tic;
 % Keep unique coordinates
 [geom, ind_v] = unique(double(pc.Location), 'rows');
 
@@ -89,3 +92,4 @@ pcOut = pointCloud(geom);
 if ~isempty(pc.Color)
     pcOut.Color = uint8(color);
 end
+toc;

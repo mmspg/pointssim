@@ -449,5 +449,3 @@ end
 % exponents, we need to sort them in alphabetical order
 [varlist,tags] = sort(varlist);
 modelterms = modelterms(:,tags);
-
-

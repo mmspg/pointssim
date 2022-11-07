@@ -40,10 +40,12 @@
 %   Normals and curvatures may be given or estimated through other software
 %   implementations (e.g., CloudCompare). In this case, they should be
 %   loaded and assigned to corresponding fields of custom structs that are
-%   used for point clouds (see sA and sB below). In all cases, the same 
-%   implementation and the same configuration (e.g., neighborhood size)
-%   should be used for the estimation of normals/curvatures, for both the
-%   original and the distorted contents.
+%   used for point clouds (see sA and sB below), but after considering the
+%   geometry sorting, point fusion and voxelization steps that take place 
+%   below (i.e., attributes should be estimated on the resulting geomerty). 
+%   In all cases, the same software implementation and the same
+%   configuration (e.g., neighborhood size) should be used to estimate
+%   normals/curvatures, for both the original and the distorted contents.
 
 
 clear all;
@@ -81,14 +83,20 @@ B = pcread('distorted.ply');
 
 
 %% Sort geometry
-[A.Location, idA] = sortrows(A.Location);
+[geomA, idA] = sortrows(A.Location);
 if ~isempty(A.Color)
-    A.Color = A.Color(idA, :);
+    colorA = A.Color(idA, :);
+    A = pointCloud(geomA, 'Color', colorA);
+else
+    A = pointCloud(geomA);
 end
 
-[B.Location, idB] = sortrows(B.Location);
+[geomB, idB] = sortrows(B.Location);
 if ~isempty(B.Color)
-    B.Color = B.Color(idB, :);
+    colorB = B.Color(idB, :);
+    B = pointCloud(geomB, 'Color', colorB);
+else
+    B = pointCloud(geomB);
 end
 
 
@@ -105,25 +113,32 @@ end
 
 
 %% Normals and curvatures estimation
-if strcmp(FITTING.SEARCH_METHOD, 'rs')
-    FITTING.SEARCH_SIZE = round(ratio * double(max(max(A.Location) - min(A.Location))));
-else
-    FITTING.SEARCH_SIZE = knn;
+if PARAMS.ATTRIBUTES.NORM || PARAMS.ATTRIBUTES.CURV
+    if strcmp(FITTING.SEARCH_METHOD, 'rs')
+        FITTING.SEARCH_SIZE = round(ratio * double(max(max(A.Location) - min(A.Location))));
+    else
+        FITTING.SEARCH_SIZE = knn;
+    end
+    [normA, curvA] = pc_estimate_norm_curv_qfit(A, FITTING.SEARCH_METHOD, FITTING.SEARCH_SIZE);
+    [normB, curvB] = pc_estimate_norm_curv_qfit(B, FITTING.SEARCH_METHOD, FITTING.SEARCH_SIZE);
 end
-[normA, curvA] = pc_estimate_norm_curv_qfit(A, FITTING.SEARCH_METHOD, FITTING.SEARCH_SIZE);
-[normB, curvB] = pc_estimate_norm_curv_qfit(B, FITTING.SEARCH_METHOD, FITTING.SEARCH_SIZE);
 
 
 %% Set custom structs with required fields
 sA.geom = A.Location;
-sA.norm = normA;
-sA.curv = curvA;
-sA.color = A.Color;
-
 sB.geom = B.Location;
-sB.norm = normB; 
-sB.curv = curvB;
-sB.color = B.Color;
+if PARAMS.ATTRIBUTES.NORM
+    sA.norm = normA;
+    sB.norm = normB; 
+end
+if PARAMS.ATTRIBUTES.CURV
+    sA.curv = curvA;
+    sB.curv = curvB;
+end
+if PARAMS.ATTRIBUTES.COLOR
+    sA.color = A.Color;
+    sB.color = B.Color;
+end
 
 
 %% Compute structural similarity scores

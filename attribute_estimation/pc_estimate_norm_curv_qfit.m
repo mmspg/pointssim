@@ -71,14 +71,13 @@ else
             error('SEARCH_SIZE should be non-negative.');
         end
     end
-    
-    
 end
 
 
+fprintf('Normals and curvatures estimation\n');
 geom = double(pc.Location);
 
-fprintf('Neighborhood formulation\n');
+fprintf('\tNeighborhoods formulation\n');
 tic;
 if strcmp(SEARCH_METHOD, 'rs')
     [id, ~] = rangesearch(geom, geom, SEARCH_SIZE);
@@ -87,7 +86,7 @@ elseif strcmp(SEARCH_METHOD, 'knn')
 end
 toc;
 
-fprintf('Estimation of normals and curvatures\n');
+fprintf('\tComputing\n');
 tic;
 normals = nan(size(geom,1),3);
 curvatures = nan(size(geom,1),1);
@@ -148,4 +147,3 @@ for i = 1:size(geom,1)
     curvatures(i) = ((1+p10^2)*p20 + (1+p01^2)*p02 - 4*p20*p02*p11) / (1 + p01^2 + p10^2)^(3/2);
 end
 toc;
-
